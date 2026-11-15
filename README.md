@@ -1,21 +1,60 @@
-# Pennysaurus
+# Pennysaurus - Personal Finance Tracker
 
-Responsive personal finance tracker built with HTML, CSS, browser JavaScript, Express, and MySQL-compatible storage.
+Pennysaurus is a web app I built for my Web Systems Technology final project. It helps users keep track of their income, expenses, monthly budgets, and savings goals. The default currency is Philippine pesos. I themed it around dinosaurs because I love them and I can info dump about them for hours.
 
-## Local setup
+## Project information
 
-1. Install Node.js 20+ and MariaDB/MySQL.
-2. Import `database/database.sql` into the database server.
-3. Copy `.env.example` to `.env`; configure the local database and a private `SESSION_SECRET` of at least 32 characters.
-4. Run `npm install`, then `npm start`; open `http://localhost:3000`.
-5. Run `npm test` for validation and database-configuration tests.
+- Student: Bernalie Tiangco
+- Section: 2nd Year - Block 4
+- GitHub: https://github.com/Xensiio/pennysaurus-personal-finance-tracker
+- Live demo: https://pennysaurus-project.vercel.app/
 
-Never commit or share `.env`.
+## Main features
 
-## Vercel and TiDB Cloud
+- Create an account and sign in to keep each user's records separate.
+- Add, edit, and delete income and expense transactions.
+- Organize transactions with categories and review monthly activity.
+- Set monthly and category budgets.
+- Create savings goals and track contributions.
+- View dashboard summaries and reports with charts.
+- Use the app on desktop, tablet, or mobile.
 
-The root `index.js` exports the Express app for Vercel Functions. Static browser files are stored in `public/`; Vercel serves them separately from the Express function. The app expects an external MySQL-compatible database; local MariaDB is not reachable by Vercel. TiDB Cloud Serverless is MySQL-compatible; PostgreSQL services such as Neon require a database migration.
+## Technology
 
-Connect TiDB Cloud's Vercel integration to this project using a **Cluster** connection and select **General** as the framework. The integration supplies `TIDB_HOST`, `TIDB_PORT`, `TIDB_USER`, `TIDB_PASSWORD`, and `TIDB_DATABASE`; TLS is enabled automatically for the `TIDB_*` configuration. Import `database/database.sql` into the selected TiDB database. In Vercel Project Settings → Environment Variables, add a new `SESSION_SECRET` (at least 32 random characters) for Preview and Production.
+- Frontend: HTML, CSS, JavaScript, Bootstrap 5, and Chart.js
+- Backend: Node.js and Express
+- Database: MySQL or MariaDB locally; TiDB Cloud Serverless for deployment
+- API: Express JSON REST API called from the browser with the Fetch API
 
-Deployment is not complete until `/api/auth/session` returns HTTP 200 with JSON and registration, login, and saved data have been tested against TiDB. Never commit database credentials or `.env`.
+## Modern features
+
+- Responsive layout for desktop, tablet, and mobile screens.
+- Interactive cash-flow and report charts.
+- Session-based authentication with CSRF protection and rate-limited sign-in and registration.
+
+## Run locally
+
+You will need Node.js 20 or later and a MySQL-compatible database.
+
+1. Import `database/database.sql` into your local MySQL or MariaDB server.
+2. Copy `.env.example` to `.env` and add your local database settings. Set `SESSION_SECRET` to a private random value of at least 32 characters.
+3. Install dependencies and start the app:
+
+   ```sh
+   npm install
+   npm start
+   ```
+
+4. Open `http://localhost:3000`. To run the automated tests, use `npm test`.
+
+## Database and deployment
+
+`database/database.sql` creates the database tables; it does not contain sample records. Use fictional data for the demo, and include a separate anonymized database backup in the final submission if required.
+
+The deployed app runs on Vercel and uses TiDB Cloud. The Express entry point is `index.js`, and the browser files are in `public/`. Set `SESSION_SECRET` and the TiDB connection variables in Vercel's environment settings. Do not put their values in this repository.
+
+This project is prepared for a school demonstration. Do not enter real financial information.
+
+## Security
+
+Never commit or share `.env`, database passwords, session secrets, or other credentials. Keep `.env` on your computer; use Vercel's environment-variable settings for deployment.
