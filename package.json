@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "description": "Responsive personal finance tracker built with Express, MySQL, and browser Fetch API.",
-  "main": "server/index.js",
+  "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
