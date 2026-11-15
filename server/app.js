@@ -70,9 +70,7 @@ app.use((req, res, next) => {
   if (req.path.startsWith("/api") && !req.body) req.body = {};
   next();
 });
-if (!process.env.VERCEL) {
-  app.use(express.static(publicDirectory, { dotfiles: "deny" }));
-}
+app.use(express.static(publicDirectory, { dotfiles: "deny" }));
 app.use(async (req, res, next) => {
   try {
     await initialize();
