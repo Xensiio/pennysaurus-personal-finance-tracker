@@ -1,0 +1,28 @@
+{
+  "name": "smart-personal-finance-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Responsive personal finance tracker built with Express, MySQL, and browser Fetch API.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.24.6"
+  },
+  "overrides": {
+    "mysql2": "$mysql2"
+  }
+}
