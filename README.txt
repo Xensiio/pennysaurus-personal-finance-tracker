@@ -26,4 +26,4 @@ Schema: database/database.sql
 The SQL file creates the tables but does not contain sample records. Include a separate anonymized database backup with sample records in the final submission if required.
 
 NOTES:
-The live app is for a school demonstration. Use fictional data only. Never publish passwords, database credentials, session secrets, or private API keys.
+The live app is for a school demonstration. Use fictional data only. DO NOT publish passwords, database credentials, session secrets, or private API keys.

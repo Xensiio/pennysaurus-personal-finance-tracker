@@ -1,6 +1,6 @@
 # Pennysaurus - Personal Finance Tracker
 
-Pennysaurus is a web app I built for my Web Systems Technology final project. It helps users keep track of their income, expenses, monthly budgets, and savings goals. The default currency is Philippine pesos. I themed it around dinosaurs because I love them, I can info dump about them for hours.
+Pennysaurus is a web app I built for my Web Systems Technology final project. It helps users keep track of their income, expenses, monthly budgets, and savings goals. The default currency is Philippine pesos. I themed it around dinosaurs because I love them and I can info dump about them for hours.
 
 ## Project information
 
