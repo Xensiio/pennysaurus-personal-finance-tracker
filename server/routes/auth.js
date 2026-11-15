@@ -43,7 +43,6 @@ async function establishSession(req, user) {
     name: user.name,
     email: user.email,
     currency: user.currency,
-    role: user.role,
   };
 }
 
@@ -59,7 +58,7 @@ router.get("/session", async (req, res, next) => {
     }
 
     const [rows] = await db.query(
-      "SELECT id, name, email, currency, role FROM users WHERE id = ?",
+      "SELECT id, name, email, currency FROM users WHERE id = ?",
       [req.session.userId],
     );
     if (!rows.length) {
@@ -100,7 +99,7 @@ router.post("/register", async (req, res, next) => {
       "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
       [name, email, passwordHash],
     );
-    const user = { id: result.insertId, name, email, currency: "PHP", role: "user" };
+    const user = { id: result.insertId, name, email, currency: "PHP" };
     const categoryPlaceholders = DEFAULT_CATEGORIES.map(() => "(?, ?, ?)").join(", ");
     const categoryValues = DEFAULT_CATEGORIES.flatMap(([categoryName, type]) => [user.id, categoryName, type]);
     await connection.execute(
@@ -128,7 +127,7 @@ router.post("/login", async (req, res, next) => {
 
   try {
     const [rows] = await db.query(
-      "SELECT id, name, email, currency, role, password_hash FROM users WHERE email = ?",
+      "SELECT id, name, email, currency, password_hash FROM users WHERE email = ?",
       [email],
     );
     const user = rows[0];

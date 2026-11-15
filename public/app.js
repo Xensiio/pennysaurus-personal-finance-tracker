@@ -16,7 +16,6 @@ const CURRENCIES = [
   ["JPY", "JPY — Japanese Yen"],
 ];
 const VALID_PAGES = new Set(NAV_ITEMS.map(([id]) => id));
-VALID_PAGES.add("admin");
 
 function currentMonth() {
   return new Date().toISOString().slice(0, 7);
@@ -48,8 +47,6 @@ const state = {
   savingsActivity: [],
   dashboard: null,
   budgetData: null,
-  adminUsers: [],
-  adminReport: null,
   filters: { search: "", categoryId: "", type: "", sort: "newest" },
   connectionError: "",
 };
@@ -123,14 +120,13 @@ function toast(message) {
 }
 
 function navMarkup() {
-  const items = state.user?.role === "admin" ? [...NAV_ITEMS, ["admin", "Admin", "♙"]] : NAV_ITEMS;
-  return items.map(([id, label, icon]) => `<button class="nav-link ${state.currentPage === id ? "active" : ""}" type="button" data-page="${id}" aria-current="${state.currentPage === id ? "page" : "false"}">
+  return NAV_ITEMS.map(([id, label, icon]) => `<button class="nav-link ${state.currentPage === id ? "active" : ""}" type="button" data-page="${id}" aria-current="${state.currentPage === id ? "page" : "false"}">
     <span class="nav-icon" aria-hidden="true">${icon}</span><span class="nav-label">${label}</span>
   </button>`).join("");
 }
 
 function pageTitle() {
-  return [...NAV_ITEMS, ["admin", "Admin"]].find(([id]) => id === state.currentPage)?.[1] || "Overview";
+  return NAV_ITEMS.find(([id]) => id === state.currentPage)?.[1] || "Overview";
 }
 
 function topbarMarkup() {
@@ -293,19 +289,6 @@ function reportsPage() {
       <article class="panel monthly-insight"><span class="metric-icon">↗</span><h2>Your monthly insight</h2><strong>You saved ${summary.income ? Math.round(summary.netSavings / summary.income * 100) : 0}% of your income.</strong><p>${categories[0] ? `${escapeHTML(categories[0].category)} is your largest expense category.` : "Your spending insights will appear when you record transactions."}</p><button class="button button-quiet" type="button" data-page="budgets">Review budget</button></article></section>`;
 }
 
-function adminPage() {
-  const report = state.adminReport || {};
-  return `<section class="page-heading"><div><h1>Administration</h1><p>Manage account roles and view privacy-safe monthly totals.</p></div></section>
-    <section class="summary-grid report-summary"><article class="summary-card"><span>Accounts</span><strong class="metric-value">${Number(report.userCount || 0)}</strong></article><article class="summary-card"><span>Transactions</span><strong class="metric-value">${Number(report.transactionCount || 0)}</strong></article><article class="summary-card"><span>Recorded income</span><strong class="metric-value">${money(report.income || 0, false)}</strong></article></section>
-    <section class="panel full-panel"><div class="panel-heading table-heading"><div><h2>Accounts</h2><p>Personal transaction details are not shown here.</p></div></div>
-      <div class="transaction-head admin-user-head"><span>ACCOUNT</span><span>EMAIL</span><span>ROLE</span><span>ACCESS</span></div>
-      ${state.adminUsers.map((user) => {
-        const isCurrentUser = String(user.id) === String(state.user.id);
-        return `<div class="transaction-row admin-user-row"><strong>${escapeHTML(user.name)}${isCurrentUser ? " (you)" : ""}</strong><span>${escapeHTML(user.email)}</span><span>${escapeHTML(user.role)}</span><span class="transaction-actions"><select aria-label="Role for ${escapeHTML(user.name)}" data-admin-role="${user.id}" ${isCurrentUser ? "disabled" : ""}><option value="user" ${user.role === "user" ? "selected" : ""}>User</option><option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option></select><button class="text-button" type="button" data-action="save-user-role" data-id="${user.id}" ${isCurrentUser ? "disabled" : ""}>Save</button></span></div>`;
-      }).join("") || `<p class="empty-state">No accounts found.</p>`}
-    </section>`;
-}
-
 function settingsPage() {
   return `<section class="page-heading"><div><h1>Settings</h1><p>Make Pennysaurus feel like yours.</p></div></section>
     <form id="settings-form"><section class="settings-grid">
@@ -419,14 +402,13 @@ function render() {
     goals: goalsPage,
     reports: reportsPage,
     settings: settingsPage,
-    admin: adminPage,
   };
   app.innerHTML = `<div class="app-shell d-flex min-vh-100"><aside class="sidebar" aria-label="Main sidebar">
       <button class="brand brand-button" type="button" data-page="overview"><img class="brand-mark" src="assets/pennysaurus-mark.png" alt=""><span>pennysaurus</span></button><p class="side-label">PERSONAL FINANCE</p><nav class="main-nav" aria-label="Main navigation">${navMarkup()}</nav>
       <button class="goal-prompt" type="button" data-page="goals"><strong>Small steps,<br>bigger possibilities.</strong><span>Your next goal is closer than you think.</span><span class="goal-prompt-link">Explore your goals →</span></button>
       <div class="profile"><span class="avatar">${escapeHTML(state.user.name[0]?.toUpperCase() || "P")}</span><span><strong>${escapeHTML(state.user.name)}</strong><small>Personal workspace</small></span><button class="profile-more" type="button" data-page="settings" aria-label="Open settings">···</button></div>
     </aside><div class="workspace">${topbarMarkup()}<main id="main-content">${pages[state.currentPage]()}${footerMarkup()}</main></div>
-    <nav class="mobile-nav ${state.user.role === "admin" ? "mobile-nav-admin" : ""}" aria-label="Mobile navigation">${navMarkup()}</nav></div>`;
+    <nav class="mobile-nav" aria-label="Mobile navigation">${navMarkup()}</nav></div>`;
   renderCharts();
 }
 
@@ -517,14 +499,6 @@ async function refreshData() {
   state.budgetData = budgetData;
   state.goals = goalsResult.goals;
   state.savingsActivity = goalsResult.activity;
-  if (state.user.role === "admin") {
-    const [adminUsersResult, adminReport] = await Promise.all([
-      api.adminUsers(),
-      api.adminReport(state.month),
-    ]);
-    state.adminUsers = adminUsersResult.users;
-    state.adminReport = adminReport;
-  }
 }
 
 async function runRequest(task, successMessage = "") {
@@ -781,8 +755,6 @@ async function action(name, element) {
       state.transactions = [];
       state.dashboard = null;
       state.budgetData = null;
-      state.adminUsers = [];
-      state.adminReport = null;
       render();
       toast("You have signed out.");
     }
@@ -793,17 +765,6 @@ async function action(name, element) {
     closeDialog();
   } else if (name === "retry") {
     await start();
-  } else if (name === "save-user-role") {
-    const select = document.querySelector(`[data-admin-role="${element.dataset.id}"]`);
-    if (!select) return;
-    const task = async () => {
-      await api.updateUserRole(element.dataset.id, select.value);
-      await refreshData();
-    };
-    if (await runRequest(task)) {
-      render();
-      toast("Account role updated.");
-    }
   }
 }
 
@@ -812,10 +773,6 @@ async function start() {
   try {
     const session = await api.session();
     state.user = session.user;
-    if (state.user && state.user.role !== "admin" && state.currentPage === "admin") {
-      state.currentPage = "overview";
-      persistPreferences();
-    }
     if (state.user) await refreshData();
     render();
   } catch (error) {
@@ -857,7 +814,6 @@ document.addEventListener("change", async (event) => {
     state.filters[target.dataset.filter] = target.value;
     if (await runRequest(loadTransactions)) render();
   }
-  if (target.matches("[data-admin-role]")) return;
   if (target.matches('[data-action="month"]')) {
     state.month = target.value;
     persistPreferences();
@@ -885,7 +841,7 @@ setInterval(async () => {
   if (!state.user) return;
   try {
     await refreshData();
-    if (["overview", "reports", "admin"].includes(state.currentPage)) render();
+    if (["overview", "reports"].includes(state.currentPage)) render();
   } catch (error) {
     toast(`Live refresh failed: ${error.message}`);
   }

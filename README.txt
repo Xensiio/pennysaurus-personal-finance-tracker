@@ -2,7 +2,7 @@ PROJECT TITLE:
 Pennysaurus - Personal Finance Tracker
 
 STUDENT NAME AND SECTION:
-Bernalie Tiangco - 2nd Year - Block 4
+TIANGCO, Bernalie Rinoa S. - 2nd Year - Block 4
 
 GITHUB REPOSITORY:
 https://github.com/Xensiio/smart-personal-finance-tracker
@@ -24,6 +24,7 @@ MODERN/EDGE FEATURES:
 DATABASE INFORMATION:
 Schema: database/database.sql
 The SQL file creates the tables but does not contain sample records. Include a separate anonymized database backup with sample records in the final submission if required.
+For an existing database created with the older schema, run database/migrations/drop-legacy-user-role.sql once.
 
 NOTES:
 The live app is for a school demonstration. Use fictional data only. DO NOT publish passwords, database credentials, session secrets, or private API keys.

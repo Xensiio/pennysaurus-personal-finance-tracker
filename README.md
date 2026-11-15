@@ -4,7 +4,7 @@ Pennysaurus is a web app I built for my Web Systems Technology final project. It
 
 ## Project information
 
-- Student: Bernalie Tiangco
+- Student: TIANGCO, Bernalie Rinoa S.
 - Section: 2nd Year - Block 4
 - GitHub: https://github.com/Xensiio/smart-personal-finance-tracker
 - Live demo: https://pennysaurus-project.vercel.app/
@@ -49,7 +49,7 @@ You will need Node.js 20 or later and a MySQL-compatible database.
 
 ## Database and deployment
 
-`database/database.sql` creates the database tables; it does not contain sample records. Use fictional data for the demo, and include a separate anonymized database backup in the final submission if required.
+`database/database.sql` creates the database tables; it does not contain sample records. If your existing database was created with the older schema, run `database/migrations/drop-legacy-user-role.sql` once. Use fictional data for the demo, and include a separate anonymized database backup in the final submission if required.
 
 The deployed app runs on Vercel and uses TiDB Cloud. The Express entry point is `index.js`, and the browser files are in `public/`. Set `SESSION_SECRET` and the TiDB connection variables in Vercel's environment settings. Do not put their values in this repository.
 

@@ -7,7 +7,7 @@ async function requireAuth(req, res, next) {
 
   try {
     const [rows] = await db.query(
-      "SELECT id, name, email, currency, role FROM users WHERE id = ?",
+      "SELECT id, name, email, currency FROM users WHERE id = ?",
       [req.session.userId],
     );
     if (!rows.length) {
