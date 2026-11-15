@@ -17,6 +17,7 @@ const transactionRoutes = require("./routes/transactions");
 
 const app = express();
 const root = path.resolve(__dirname, "..");
+const publicDirectory = path.join(root, "public");
 const isProduction = process.env.NODE_ENV === "production";
 
 if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
@@ -31,6 +32,20 @@ const sessionStore = new MySQLStore({
   createDatabaseTable: true,
 }, db.pool);
 app.locals.sessionStore = sessionStore;
+
+let initialization;
+function initialize() {
+  if (!initialization) {
+    initialization = db.query("SELECT 1")
+      .then(() => sessionStore.onReady())
+      .catch((error) => {
+        initialization = undefined;
+        throw error;
+      });
+  }
+  return initialization;
+}
+app.locals.initialize = initialize;
 
 app.set("trust proxy", isProduction ? 1 : false);
 app.use(helmet({
@@ -55,6 +70,15 @@ app.use((req, res, next) => {
   if (req.path.startsWith("/api") && !req.body) req.body = {};
   next();
 });
+app.use(express.static(publicDirectory, { dotfiles: "deny" }));
+app.use(async (req, res, next) => {
+  try {
+    await initialize();
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});
 app.use(session({
   name: "pennysaurus.sid",
   secret: process.env.SESSION_SECRET,
@@ -76,12 +100,6 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Too many sign-in attempts. Please wait before trying again." },
 });
-
-app.get("/", (req, res) => res.sendFile(path.join(root, "index.html")));
-app.get("/app.js", (req, res) => res.sendFile(path.join(root, "app.js")));
-app.get("/api.js", (req, res) => res.sendFile(path.join(root, "api.js")));
-app.get("/styles.css", (req, res) => res.sendFile(path.join(root, "styles.css")));
-app.use("/assets", express.static(path.join(root, "assets"), { index: false, dotfiles: "deny" }));
 
 app.use("/api", requireCsrf);
 app.use("/api/auth/login", authLimiter);

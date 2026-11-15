@@ -29,8 +29,7 @@ async function shutdown(signal) {
 }
 
 async function start() {
-  await db.query("SELECT 1");
-  await app.locals.sessionStore.onReady();
+  await app.locals.initialize();
   server = app.listen(port, () => {
     process.stdout.write(`Pennysaurus is listening on port ${port}.\n`);
   });
