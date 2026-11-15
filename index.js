@@ -1,3 +1,7 @@
+const express = require("express");
 const app = require("./server/app");
 
-module.exports = app;
+const handler = express();
+handler.use(app);
+
+module.exports = handler;
